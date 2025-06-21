@@ -5,6 +5,36 @@ To spin up your Spring Boot server while working on a new project, you typically
 ### Prerequisites
 
 1. **Java Development Kit (JDK):** Ensure you have a JDK installed (Java 11 or higher is commonly used for modern Spring Boot).
+
+```
+### check for Java 24
+```bash
+# Check if Java 24 is installed
+java -version
+# If not installed, you can install it using Homebrew on macOS:
+```bash
+# Install Java 24 using Homebrew
+brew install openjdk@24
+# Set JAVA_HOME to the installed JDK
+```bash
+# Set JAVA_HOME to the installed JDK
+# For macOS, you can set JAVA_HOME in your shell profile (e.g., ~/.bash_profile, ~/.zshrc)
+```bash
+# Add the following line to your shell profile
+```bash
+# For macOS, you can set JAVA_HOME in your shell profile (e.g., ~/.bash_profile, ~/.zshrc)
+export JAVA_HOME=$(/usr/libexec/java_home -v 24)
+# For macOS, you can set JAVA_HOME in your shell profile (e.g., ~/.bash_profile, ~/.zshrc)
+```bash
+# For macOS, you can set JAVA_HOME in your shell profile (e.g., ~/.bash_profile, ~/.zshrc)
+```bash
+/usr/libexec/java_home -v 24
+```bash
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-24.jdk/Contents/Home
+export PATH=$JAVA_HOME/bin:$PATH
+```
+
+```
 2. **Apache Maven or Gradle:** Spring Boot projects are typically built with either Maven or Gradle.
 3. **An IDE (Integrated Development Environment):**
       * **IntelliJ IDEA (Ultimate or Community Edition):** Highly recommended for Spring Boot.
@@ -92,6 +122,10 @@ This method is useful for build servers, deployment, or when you prefer a termin
 
 2. **Build (Optional but Good Practice):**
 
+    ```bash
+    export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-24.jdk/Contents/Home
+    export PATH=$JAVA_HOME/bin:$PATH
+    ```
     ```bash
     mvn clean install
     ```
