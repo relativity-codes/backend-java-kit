@@ -30,7 +30,8 @@
 		<java.version>24</java.version>
 		<spring-ai.version>1.0.0</spring-ai.version>
 		<spring-cloud.version>2024.0.1</spring-cloud.version>
-		<spring-modulith.version>1.3.6</spring-modulith.version>
+		<spring-boot.version>3.2.5</spring-boot.version>
+		<spring-modulith.version>1.3.7</spring-modulith.version>
 		<spring-shell.version>3.4.0</spring-shell.version>
 	</properties>
 	<dependencies>
@@ -39,10 +40,6 @@
 			<artifactId>spring-boot-starter-amqp</artifactId>
 		</dependency>
 		<!-- These dependencies are crucial for Spring Security and JWT -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt-api</artifactId>
@@ -124,10 +121,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-aot</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-websocket</artifactId>
 		</dependency>
 		<dependency>
@@ -198,10 +191,11 @@
 			<groupId>org.springframework.modulith</groupId>
 			<artifactId>spring-modulith-docs</artifactId>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.springframework.modulith</groupId>
 			<artifactId>spring-modulith-events</artifactId>
-		</dependency>
+			<version>${spring-modulith.version}</version>
+		</dependency> -->
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-messaging</artifactId>
@@ -353,5 +347,16 @@
 			</plugin>
 		</plugins>
 	</build>
+	<repositories>
+		<repository>
+			<id>spring-releases</id>
+			<url>https://repo.spring.io/release</url>
+		</repository>
+		<repository>
+			<id>spring-milestones</id>
+			<url>https://repo.spring.io/milestone</url>
+		</repository>
+	</repositories>
+
 
 </project>

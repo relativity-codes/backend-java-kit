@@ -8,7 +8,9 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.swifre.trade_fx_maven.mailing.dto.EmailRequest;
@@ -41,6 +43,29 @@ public class AuthService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    /**
+     * Implements Spring Security's UserDetailsService to load user details by
+     * username.
+     * 
+     * @param username The username to load.
+     * @return UserDetails object representing the loaded user.
+     * @throws UsernameNotFoundException if the user is not found.
+     */
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = this.userRepository.findByUsername(username).orElse(null);
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found with username: " + username);
+        }
+        return user; // Our User entity already implements UserDetails
+    }
+
+    /**
+     * Verifies the user's email using a token.
+     * 
+     * @param token The JWT token containing the user's ID.
+     * @throws Exception if the user is not found or any other error occurs.
+     */
     public void verifyEmail(String token) throws Exception {
         UUID userId = this.jwtService.extractId(token);
         User userDetails = this.userRepository.findById(userId).orElseThrow(() -> new Exception("User not found"));
