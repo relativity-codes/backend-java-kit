@@ -66,9 +66,11 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Use stateless sessions
                 )
-                .authenticationProvider(authenticationProvider()) // Set custom authentication provider
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class); // Add JWT filter before
-                                                                                             // UsernamePasswordAuthenticationFilter
+                .authenticationProvider(this.authenticationProvider()) // Set custom authentication provider
+                .addFilterBefore(this.jwtAuthFilter,
+                        UsernamePasswordAuthenticationFilter.class); // Add JWT filter
+        // before
+        // UsernamePasswordAuthenticationFilter
 
         // For H2 console to work with Spring Security (since it uses iframes)
         http.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()));

@@ -1,4 +1,3 @@
-// User.java - Model/Entity
 package com.swifre.trade_fx_maven.user.entity;
 
 import java.time.LocalDateTime;

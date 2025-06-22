@@ -10,15 +10,14 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.swifre.trade_fx_maven.auth.service.AuthService;
 import com.swifre.trade_fx_maven.auth.service.JwtService;
+import com.swifre.trade_fx_maven.user.entity.User;
+import com.swifre.trade_fx_maven.user.repository.UserRepository;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import com.swifre.trade_fx_maven.user.entity.User;
 
 /**
  * Custom Spring Security filter to intercept incoming requests and validate
@@ -29,17 +28,17 @@ import com.swifre.trade_fx_maven.user.entity.User;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-    private final AuthService authService;
+    private final UserRepository userRepository;
 
     /**
      * Constructor for JwtAuthenticationFilter.
      * 
-     * @param jwtService  Service for JWT operations.
-     * @param authService Service to load user details.
+     * @param jwtService     Service for JWT operations.
+     * @param userRepository Repository to load user details.
      */
-    public JwtAuthenticationFilter(JwtService jwtService, AuthService authService) {
+    public JwtAuthenticationFilter(JwtService jwtService, UserRepository userRepository) {
         this.jwtService = jwtService;
-        this.authService = authService;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -61,15 +60,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         jwt = authHeader.substring(7); // "Bearer ".length() is 7
 
         // 3. Extract username from JWT
-        id = jwtService.extractId(jwt);
+        id = this.jwtService.extractId(jwt);
 
         // 4. Validate JWT and set up SecurityContext
         if (id != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             // If id is present and no authentication is currently set in
             // SecurityContext
-            User user = this.authService.getUserById(id).orElse(null);
+            User user = this.userRepository.findById(id).orElse(null);
 
-            if (user != null && jwtService.isTokenValid(jwt, user)) {
+            if (user != null && this.jwtService.isTokenValid(jwt, user)) {
                 // If token is valid, create an authentication object
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         user,

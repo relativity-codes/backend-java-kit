@@ -1,13 +1,12 @@
 package com.swifre.trade_fx_maven.mailing.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.stereotype.Service;
-import org.springframework.beans.factory.annotation.Value; // Import Value for 'from' address
-
-import java.util.List;
+import org.springframework.stereotype.Service; // Import Value for 'from' address
 
 import com.swifre.trade_fx_maven.mailing.dto.EmailRequest;
 
@@ -23,7 +22,6 @@ public class EmailService {
     @Value("${spring.mail.username}") // Injects the email username from properties as the sender
     private String fromEmail;
 
-    @Autowired
     public EmailService(JavaMailSender mailSender) {
         this.mailSender = mailSender;
     }

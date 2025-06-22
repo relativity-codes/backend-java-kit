@@ -5,16 +5,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException; // Import UUID
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder; // Import UUID
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.swifre.trade_fx_maven.user.entity.User;
-import com.swifre.trade_fx_maven.user.repository.UserRepository; // Import PasswordEncoder
+import com.swifre.trade_fx_maven.user.repository.UserRepository;
 
 /**
  * Service layer for User-related business operations.
@@ -34,7 +33,6 @@ public class UserService implements UserDetailsService { // Implemented UserDeta
      * @param userRepository  The repository for user data.
      * @param passwordEncoder The encoder for hashing passwords.
      */
-    @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;

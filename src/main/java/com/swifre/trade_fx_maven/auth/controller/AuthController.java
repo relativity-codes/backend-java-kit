@@ -72,7 +72,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<User> registerUser(@RequestBody User user) {
         // Here, the password will be encoded by UserService before saving.
-        User createdUser = userService.createUser(user);
+        User createdUser = this.userService.createUser(user);
         // Optionally generate a token for the newly registered user if they should be
         // logged in immediately
         // String jwt = jwtService.generateToken(createdUser);

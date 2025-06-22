@@ -11,6 +11,7 @@ import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.swifre.trade_fx_maven.mailing.dto.EmailRequest;
@@ -25,23 +26,22 @@ public class AuthService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final EmailService mailService;
-    private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
-    @Value("${app.frontend.url}")
+    @Value("${application.frontend.url}")
     private String frontendUrl;
 
     @Autowired
     public AuthService(
             UserRepository userRepository,
             EmailService mailService,
-            PasswordEncoder passwordEncoder,
             JwtService jwtService) {
         this.mailService = mailService;
         this.jwtService = jwtService;
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
     }
+
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     /**
      * Implements Spring Security's UserDetailsService to load user details by
@@ -97,14 +97,14 @@ public class AuthService implements UserDetailsService {
     @Transactional
     public User createUser(User user) {
         // Encode the password before saving
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setPassword(this.passwordEncoder.encode(user.getPassword()));
         // emailVerified defaults to false in User entity constructor
         return this.userRepository.save(user);
     }
 
     public Optional<User> updatePassword(UUID userId, String newPassword) {
         return this.userRepository.findById(userId).map(user -> {
-            user.setPassword(passwordEncoder.encode(newPassword));
+            user.setPassword(this.passwordEncoder.encode(newPassword));
             return this.userRepository.save(user);
         });
     }
@@ -158,7 +158,7 @@ public class AuthService implements UserDetailsService {
             // In a real application, you might want to check for token expiry here,
             // but JWT libraries often handle this automatically during verification.
             this.userRepository.findById(userId).map(user -> {
-                user.setPassword(passwordEncoder.encode(newPassword));
+                user.setPassword(this.passwordEncoder.encode(newPassword));
                 return this.userRepository.save(user);
             });
         } catch (Exception e) {

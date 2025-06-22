@@ -4,16 +4,13 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ImportRuntimeHints;
-// import org.springframework.modulith.runtime.ModulithRuntimeHints;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.swifre.trade_fx_maven.user.entity.User;
 import com.swifre.trade_fx_maven.user.enums.UserType;
 import com.swifre.trade_fx_maven.user.repository.UserRepository;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootApplication
-// @ImportRuntimeHints(ModulithRuntimeHints.class)
 public class TradeFxMavenApplication {
 
 	public static void main(String[] args) {

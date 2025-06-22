@@ -136,10 +136,6 @@
 			<artifactId>spring-ai-markdown-document-reader</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.ai</groupId>
-			<artifactId>spring-ai-starter-vector-store-pgvector</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework.amqp</groupId>
 			<artifactId>spring-rabbit-stream</artifactId>
 		</dependency>
@@ -191,11 +187,6 @@
 			<groupId>org.springframework.modulith</groupId>
 			<artifactId>spring-modulith-docs</artifactId>
 		</dependency>
-		<!-- <dependency>
-			<groupId>org.springframework.modulith</groupId>
-			<artifactId>spring-modulith-events</artifactId>
-			<version>${spring-modulith.version}</version>
-		</dependency> -->
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-messaging</artifactId>
