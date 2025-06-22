@@ -46,7 +46,7 @@ public class UserService implements UserDetailsService { // Implemented UserDeta
      * @return A list of all User objects.
      */
     public List<User> getAllUsers() {
-        return userRepository.findAll();
+        return this.userRepository.findAll();
     }
 
     /**
@@ -57,7 +57,7 @@ public class UserService implements UserDetailsService { // Implemented UserDeta
      */
     public Optional<User> getUserById(UUID id) throws RuntimeException {
         try {
-            return userRepository.findById(id);
+            return this.userRepository.findById(id);
         } catch (Exception e) {
             throw new RuntimeException("Error retrieving user by ID: " + id, e);
         }
@@ -75,7 +75,7 @@ public class UserService implements UserDetailsService { // Implemented UserDeta
         // Encode the password before saving
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         // emailVerified defaults to false in User entity constructor
-        return userRepository.save(user);
+        return this.userRepository.save(user);
     }
 
     /**
@@ -88,7 +88,7 @@ public class UserService implements UserDetailsService { // Implemented UserDeta
      */
     @Transactional
     public Optional<User> updateUser(UUID id, User userDetails) {
-        return userRepository.findById(id).map(user -> {
+        return this.userRepository.findById(id).map(user -> {
             user.setUsername(userDetails.getUsername());
             user.setEmail(userDetails.getEmail());
             // Only update password if a new one is provided and not empty
@@ -97,7 +97,7 @@ public class UserService implements UserDetailsService { // Implemented UserDeta
             }
             user.setUserType(userDetails.getUserType());
             user.setEmailVerified(userDetails.isEmailVerified()); // Allow updating verification status
-            return userRepository.save(user);
+            return this.userRepository.save(user);
         });
     }
 
@@ -123,7 +123,7 @@ public class UserService implements UserDetailsService { // Implemented UserDeta
      * @return The User object if found, null otherwise.
      */
     public User findByUsername(String username) {
-        return userRepository.findByUsername(username).orElse(null);
+        return this.userRepository.findByUsername(username).orElse(null);
     }
 
     /**
@@ -155,7 +155,9 @@ public class UserService implements UserDetailsService { // Implemented UserDeta
     }
 
     public void verifyEmail(UUID userId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'verifyEmail'");
+        this.userRepository.findById(userId).ifPresent(user -> {
+            user.setEmailVerified(true); // Set emailVerified to true
+            this.userRepository.save(user); // Save the updated user
+        });
     }
 }

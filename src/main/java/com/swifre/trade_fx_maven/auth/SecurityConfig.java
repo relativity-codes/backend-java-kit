@@ -11,11 +11,12 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.swifre.trade_fx_maven.auth.service.AuthService;
 
 /**
  * Spring Security configuration class.
@@ -31,17 +32,17 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
-    private final UserDetailsService userDetailsService;
+    private final AuthService authService;
 
     /**
      * Constructor for SecurityConfig.
      * 
-     * @param jwtAuthFilter      The custom JWT authentication filter.
-     * @param userDetailsService The service to load user details.
+     * @param jwtAuthFilter The custom JWT authentication filter.
+     * @param authService   The service to load user details.
      */
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter, UserDetailsService userDetailsService) {
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter, AuthService authService) {
         this.jwtAuthFilter = jwtAuthFilter;
-        this.userDetailsService = userDetailsService;
+        this.authService = authService;
     }
 
     /**
@@ -94,7 +95,7 @@ public class SecurityConfig {
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService); // Set our custom UserDetailsService
+        authProvider.setUserDetailsService(authService); // Set our custom UserDetailsService
         authProvider.setPasswordEncoder(passwordEncoder()); // Set our password encoder
         return authProvider;
     }

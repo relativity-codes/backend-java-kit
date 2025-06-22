@@ -10,6 +10,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.swifre.trade_fx_maven.auth.service.AuthService;
 import com.swifre.trade_fx_maven.auth.service.JwtService;
 
 import jakarta.servlet.FilterChain;
@@ -18,7 +19,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import com.swifre.trade_fx_maven.user.entity.User;
-import com.swifre.trade_fx_maven.user.service.UserService;
 
 /**
  * Custom Spring Security filter to intercept incoming requests and validate
@@ -29,17 +29,17 @@ import com.swifre.trade_fx_maven.user.service.UserService;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-    private final UserService userService;
+    private final AuthService authService;
 
     /**
      * Constructor for JwtAuthenticationFilter.
      * 
      * @param jwtService  Service for JWT operations.
-     * @param userService Service to load user details.
+     * @param authService Service to load user details.
      */
-    public JwtAuthenticationFilter(JwtService jwtService, UserService userService) {
+    public JwtAuthenticationFilter(JwtService jwtService, AuthService authService) {
         this.jwtService = jwtService;
-        this.userService = userService;
+        this.authService = authService;
     }
 
     @Override
@@ -67,7 +67,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (id != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             // If id is present and no authentication is currently set in
             // SecurityContext
-            User user = this.userService.getUserById(id).orElse(null);
+            User user = this.authService.getUserById(id).orElse(null);
 
             if (user != null && jwtService.isTokenValid(jwt, user)) {
                 // If token is valid, create an authentication object

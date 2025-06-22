@@ -16,7 +16,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-
 import com.swifre.trade_fx_maven.user.entity.User;
 
 /**

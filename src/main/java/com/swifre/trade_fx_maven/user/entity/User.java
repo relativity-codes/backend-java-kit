@@ -46,13 +46,12 @@ public class User implements UserDetails { // Implemented UserDetails
     @Column(nullable = false)
     private String password;
 
-    @Enumerated(EnumType.STRING) // Store enum as String in DB
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserType userType;
 
-    // New fields for email verification and password reset
     @Column(name = "email_verified", nullable = false)
-    private boolean emailVerified = false; // Default to false
+    private boolean emailVerified = false;
 
     @Column(name = "two_factor_secret", nullable = true)
     private String twoFactorSecret;
@@ -63,7 +62,6 @@ public class User implements UserDetails { // Implemented UserDetails
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    // Default constructor for JPA
     public User() {
         this.id = UUID.randomUUID(); // Generate UUID on object creation
     }
@@ -139,7 +137,6 @@ public class User implements UserDetails { // Implemented UserDetails
     // UserDetails interface implementations
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Return a collection containing only the user's UserType as a GrantedAuthority
         return Collections.singletonList(this.userType);
     }
 
