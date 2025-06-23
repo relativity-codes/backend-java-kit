@@ -9,6 +9,13 @@ import org.springframework.web.bind.annotation.*;
 import com.swifre.trade_fx_maven.user.entity.User;
 import com.swifre.trade_fx_maven.user.service.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import java.util.List;
 import java.util.UUID; // Import UUID
 
@@ -18,6 +25,7 @@ import java.util.UUID; // Import UUID
  */
 @RestController
 @RequestMapping("/api/users") // Base path for all user-related endpoints
+@Tag(name = "User Management", description = "Operations related to user management")
 public class UserController {
 
     private final UserService userService;
@@ -39,7 +47,13 @@ public class UserController {
      * 
      * @return A ResponseEntity containing a list of users and HTTP status OK.
      */
-    @GetMapping
+    @Operation(summary = "Get all users", description = "Retrieves a list of all users in the system")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved list of users", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @ResponseStatus(HttpStatus.OK) // Set response status
+    @GetMapping(produces = "application/json") // Specify produces type
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.getAllUsers();
         return new ResponseEntity<>(users, HttpStatus.OK);
@@ -53,6 +67,13 @@ public class UserController {
      * @return A ResponseEntity containing the user and HTTP status OK if found,
      *         or HTTP status NOT_FOUND if not found.
      */
+    @Operation(summary = "Get user by ID", description = "Retrieves a user by their unique ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved user", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
+            @ApiResponse(responseCode = "404", description = "User not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @ResponseStatus(HttpStatus.OK) // Set response status
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable UUID id) { // Changed Long to UUID
         return userService.getUserById(id)
@@ -67,7 +88,14 @@ public class UserController {
      * @param user The User object to create (from request body).
      * @return A ResponseEntity containing the created user and HTTP status CREATED.
      */
-    @PostMapping
+    @Operation(summary = "Create a new user", description = "Creates a new user in the system")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Successfully created user", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid user details"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @ResponseStatus(HttpStatus.CREATED) // Set response status
+    @PostMapping(produces = "application/json") // Specify produces type
     public ResponseEntity<User> createUser(@RequestBody User user) {
         User createdUser = userService.createUser(user);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
@@ -83,6 +111,15 @@ public class UserController {
      *         found,
      *         or HTTP status NOT_FOUND if not found.
      */
+
+    @Operation(summary = "Update user by ID", description = "Updates an existing user by their unique ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully updated user", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
+            @ApiResponse(responseCode = "404", description = "User not found"),
+            @ApiResponse(responseCode = "400", description = "Invalid user details"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @ResponseStatus(HttpStatus.OK) // Set response status
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable UUID id, @RequestBody User userDetails) { // Changed Long to
                                                                                                    // UUID
@@ -99,7 +136,14 @@ public class UserController {
      * @return A ResponseEntity with HTTP status NO_CONTENT if deleted,
      *         or HTTP status NOT_FOUND if not found.
      */
-    @DeleteMapping("/{id}")
+    @Operation(summary = "Delete user by ID", description = "Deletes a user by their unique ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Successfully deleted user"),
+            @ApiResponse(responseCode = "404", description = "User not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @ResponseStatus(HttpStatus.NO_CONTENT) // Set response status
+    @DeleteMapping("/{id}") // Specify the path variable
     public ResponseEntity<Void> deleteUser(@PathVariable UUID id) { // Changed Long to UUID
         if (userService.deleteUser(id)) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

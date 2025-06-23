@@ -58,7 +58,11 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable) // Disable CSRF for stateless API
                 .authorizeHttpRequests(auth -> auth
                         // Permit access to authentication endpoint and H2 console
-                        .requestMatchers("/api/auth/**", "/h2-console/**").permitAll()
+                        .requestMatchers("/", "/v1/api-docs", "/swagger-ui.html", "/swagger-ui/**",
+                                "/swagger-resources/**", "/public/**", "/css/**", "/js/**", "/images/**",
+                                "/api/auth/**",
+                                "/h2-console/**")
+                        .permitAll()
                         // Require authentication for all other API endpoints
                         .requestMatchers("/api/**").authenticated()
                         // Deny all other requests by default (if not matched above)
@@ -68,9 +72,8 @@ public class SecurityConfig {
                 )
                 .authenticationProvider(this.authenticationProvider()) // Set custom authentication provider
                 .addFilterBefore(this.jwtAuthFilter,
-                        UsernamePasswordAuthenticationFilter.class); // Add JWT filter
-        // before
-        // UsernamePasswordAuthenticationFilter
+                        UsernamePasswordAuthenticationFilter.class)
+                .csrf(csrf -> csrf.disable());
 
         // For H2 console to work with Spring Security (since it uses iframes)
         http.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()));

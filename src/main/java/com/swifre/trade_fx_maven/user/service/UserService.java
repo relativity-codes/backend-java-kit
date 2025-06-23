@@ -91,7 +91,7 @@ public class UserService implements UserDetailsService { // Implemented UserDeta
             user.setEmail(userDetails.getEmail());
             // Only update password if a new one is provided and not empty
             if (userDetails.getPassword() != null && !userDetails.getPassword().isEmpty()) {
-                user.setPassword(passwordEncoder.encode(userDetails.getPassword()));
+                user.setPassword(this.passwordEncoder.encode(userDetails.getPassword()));
             }
             user.setUserType(userDetails.getUserType());
             user.setEmailVerified(userDetails.isEmailVerified()); // Allow updating verification status
@@ -147,7 +147,7 @@ public class UserService implements UserDetailsService { // Implemented UserDeta
 
     public Optional<User> updatePassword(UUID userId, String newPassword) {
         return this.userRepository.findById(userId).map(user -> {
-            user.setPassword(passwordEncoder.encode(newPassword));
+            user.setPassword(this.passwordEncoder.encode(newPassword));
             return this.userRepository.save(user);
         });
     }

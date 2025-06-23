@@ -8,6 +8,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import com.swifre.trade_fx_maven.auth.dto.AuthRequest;
 import com.swifre.trade_fx_maven.auth.dto.AuthResponse;
 import com.swifre.trade_fx_maven.auth.service.JwtService;
@@ -20,6 +27,7 @@ import com.swifre.trade_fx_maven.auth.service.AuthService;
  */
 @RestController
 @RequestMapping("/api/auth")
+@Tag(name = "Authentication", description = "Operations related to user authentication")
 public class AuthController {
 
     private final AuthService authService;
@@ -40,6 +48,12 @@ public class AuthController {
      *                    password.
      * @return ResponseEntity with JWT token if successful, or unauthorized status.
      */
+    @Operation(summary = "User Login", description = "Authenticates a user and returns a JWT token")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User authenticated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = AuthResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Invalid credentials"),
+            @ApiResponse(responseCode = "500", description = "Internal server error - Authentication failed")
+    })
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> authenticate(@RequestBody AuthRequest authRequest) {
         // Authenticate the user using Spring Security's AuthService
@@ -69,6 +83,12 @@ public class AuthController {
      * @param user The user object to register.
      * @return ResponseEntity with the created user.
      */
+    @Operation(summary = "User Registration", description = "Registers a new user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "User registered successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
+            @ApiResponse(responseCode = "400", description = "Bad Request - Invalid user data"),
+            @ApiResponse(responseCode = "500", description = "Internal server error - Registration failed")
+    })
     @PostMapping("/register")
     public ResponseEntity<User> registerUser(@RequestBody User user) {
         // Here, the password will be encoded by UserService before saving.
