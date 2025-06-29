@@ -15,7 +15,7 @@ import com.swifre.trade_fx_maven.mailing.service.EmailService;
  * REST Controller for triggering email sending.
  */
 @RestController
-@RequestMapping("/api/email") // Base path for email-related endpoints
+@RequestMapping("/api/mailing") // Base path for email-related endpoints
 public class EmailController {
 
     private final EmailService emailService;

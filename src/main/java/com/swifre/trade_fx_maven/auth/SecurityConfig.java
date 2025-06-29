@@ -2,21 +2,26 @@ package com.swifre.trade_fx_maven.auth;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity; // For @PreAuthorize
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+// import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.swifre.trade_fx_maven.auth.service.AuthService;
+import com.swifre.trade_fx_maven.common.SecurityRules;
+
+import java.util.List;
 
 /**
  * Spring Security configuration class.
@@ -33,6 +38,7 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthService authService;
+    private final List<SecurityRules> featureSecurityRules;
 
     /**
      * Constructor for SecurityConfig.
@@ -40,9 +46,11 @@ public class SecurityConfig {
      * @param jwtAuthFilter The custom JWT authentication filter.
      * @param authService   The service to load user details.
      */
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter, AuthService authService) {
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter, AuthService authService,
+            List<SecurityRules> featureSecurityRules) {
         this.jwtAuthFilter = jwtAuthFilter;
         this.authService = authService;
+        this.featureSecurityRules = featureSecurityRules;
     }
 
     /**
@@ -52,28 +60,24 @@ public class SecurityConfig {
      * @return The built SecurityFilterChain.
      * @throws Exception if an error occurs during configuration.
      */
+    @SuppressWarnings("unused")
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable) // Disable CSRF for stateless API
-                .authorizeHttpRequests(auth -> auth
-                        // Permit access to authentication endpoint and H2 console
-                        .requestMatchers("/", "/v1/api-docs", "/swagger-ui.html", "/swagger-ui/**",
-                                "/swagger-resources/**", "/public/**", "/css/**", "/js/**", "/images/**",
-                                "/api/auth/**",
-                                "/h2-console/**")
-                        .permitAll()
-                        // Require authentication for all other API endpoints
-                        .requestMatchers("/api/**").authenticated()
-                        // Deny all other requests by default (if not matched above)
-                        .anyRequest().denyAll())
+                .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Use stateless sessions
-                )
-                .authenticationProvider(this.authenticationProvider()) // Set custom authentication provider
-                .addFilterBefore(this.jwtAuthFilter,
+                ).authorizeHttpRequests(c -> {
+                    this.featureSecurityRules.forEach(r -> r.configure(c));
+                    c.anyRequest().authenticated();
+                }).addFilterBefore(this.jwtAuthFilter,
                         UsernamePasswordAuthenticationFilter.class)
-                .csrf(csrf -> csrf.disable());
+                .exceptionHandling(c -> {
+                    c.authenticationEntryPoint(
+                            new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
+                    c.accessDeniedHandler(((request, response, accessDeniedException) -> response
+                            .setStatus(HttpStatus.FORBIDDEN.value())));
+                });
 
         // For H2 console to work with Spring Security (since it uses iframes)
         http.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()));

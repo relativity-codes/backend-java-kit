@@ -43,15 +43,23 @@ public class TradeFxMavenApplication {
 			System.out.println("Super Admin Found:");
 			System.out.println("---------------------------------------------");
 			User user = repository.findByUsername(user1.getUsername()).orElse(null);
-			System.out.println(user);
-			System.out.println();
+			if (user != null) {
+				System.out.println(user);
+				System.out.println();
+			} else {
+				System.out.println("User not found");
+			}
 
 			// Fetch users by username
 			System.out.println("User found with findByUsername('relativity-codes'):");
 			System.out.println("---------------------------------------------");
 			User relativity = repository.findByUsername("relativity-codes").orElse(null);
-			System.out.println(relativity);
-			System.out.println();
+			if (relativity != null) {
+				System.out.println(relativity);
+				System.out.println();
+			} else {
+				System.out.println("User not found");
+			}
 		};
 	}
 }

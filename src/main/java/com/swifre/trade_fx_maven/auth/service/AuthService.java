@@ -1,5 +1,7 @@
 package com.swifre.trade_fx_maven.auth.service;
 
+import java.time.LocalDateTime;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -8,6 +10,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,6 +21,7 @@ import com.swifre.trade_fx_maven.mailing.dto.EmailRequest;
 import com.swifre.trade_fx_maven.mailing.service.EmailService;
 import com.swifre.trade_fx_maven.user.entity.User;
 import com.swifre.trade_fx_maven.user.repository.UserRepository;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -60,6 +64,12 @@ public class AuthService implements UserDetailsService {
         return user; // Our User entity already implements UserDetails
     }
 
+    public User getCurrentUser() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        var userId = (UUID) authentication.getPrincipal();
+        return this.userRepository.findById(userId).orElse(null);
+    }
+
     /**
      * Verifies the user's email using a token.
      * 
@@ -69,7 +79,7 @@ public class AuthService implements UserDetailsService {
     public void verifyEmail(String token) throws Exception {
         UUID userId = this.jwtService.extractId(token);
         User userDetails = this.userRepository.findById(userId).orElseThrow(() -> new Exception("User not found"));
-        userDetails.setEmailVerified(true);
+        userDetails.setEmailVerifiedAt(LocalDateTime.now());
         this.userRepository.save(userDetails);
     }
 
@@ -119,7 +129,7 @@ public class AuthService implements UserDetailsService {
      */
     public void verifyEmail(UUID userId) {
         this.userRepository.findById(userId).ifPresent(user -> {
-            user.setEmailVerified(true); // Set emailVerified to true
+            user.setEmailVerifiedAt(LocalDateTime.now()); // Set emailVerified to true
             this.userRepository.save(user); // Save the updated user
         });
     }
@@ -181,5 +191,32 @@ public class AuthService implements UserDetailsService {
         } catch (Exception e) {
             throw new Exception("Invalid or incorrect old password: " + e.getMessage());
         }
+    }
+
+    public void updateEmail(UUID userId, String newEmail) throws Exception {
+        User user = this.userRepository.findById(userId)
+                .orElseThrow(() -> new Exception("User not found for email update"));
+
+        user.setEmail(newEmail);
+        user.setEmailVerifiedAt(null); // Reset email verification status
+        this.userRepository.save(user);
+
+        // Optionally send a verification email after updating the email
+        String verificationToken = this.jwtService.generateToken(user);
+        String verificationLink = frontendUrl + "/verify-email?token=" + verificationToken;
+
+        this.mailService.sendEmail(new EmailRequest(List.of(newEmail), "Verify New Email",
+                "Please click the link to verify your new email: " + verificationLink));
+    }
+
+    public void sendEmailVerification(UUID userId, String newEmail) throws Exception {
+        User user = this.userRepository.findById(userId)
+                .orElseThrow(() -> new Exception("User not found for email verification"));
+
+        String verificationToken = this.jwtService.generateToken(user);
+        String verificationLink = frontendUrl + "/verify-email?token=" + verificationToken;
+
+        this.mailService.sendEmail(new EmailRequest(List.of(newEmail), "Verify New Email",
+                "Please click the link to verify your new email: " + verificationLink));
     }
 }

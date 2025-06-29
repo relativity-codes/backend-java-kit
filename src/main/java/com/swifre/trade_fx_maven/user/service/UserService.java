@@ -1,6 +1,7 @@
 // UserService.java - Business Logic Layer
 package com.swifre.trade_fx_maven.user.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -94,7 +95,6 @@ public class UserService implements UserDetailsService { // Implemented UserDeta
                 user.setPassword(this.passwordEncoder.encode(userDetails.getPassword()));
             }
             user.setUserType(userDetails.getUserType());
-            user.setEmailVerified(userDetails.isEmailVerified()); // Allow updating verification status
             return this.userRepository.save(user);
         });
     }
@@ -154,8 +154,8 @@ public class UserService implements UserDetailsService { // Implemented UserDeta
 
     public void verifyEmail(UUID userId) {
         this.userRepository.findById(userId).ifPresent(user -> {
-            user.setEmailVerified(true); // Set emailVerified to true
-            this.userRepository.save(user); // Save the updated user
+            user.setEmailVerifiedAt(LocalDateTime.now());
+            this.userRepository.save(user);
         });
     }
 }

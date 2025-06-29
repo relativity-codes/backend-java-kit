@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.swifre.trade_fx_maven.user.dtos.UserDto;
 import com.swifre.trade_fx_maven.user.entity.User;
 import com.swifre.trade_fx_maven.user.service.UserService;
 
@@ -15,9 +16,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 import java.util.List;
 import java.util.UUID; // Import UUID
+
+import com.swifre.trade_fx_maven.user.enums.UserType;
 
 /**
  * REST Controller for User management.
@@ -96,8 +100,15 @@ public class UserController {
     })
     @ResponseStatus(HttpStatus.CREATED) // Set response status
     @PostMapping(produces = "application/json") // Specify produces type
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        User createdUser = userService.createUser(user);
+    public ResponseEntity<User> createUser(@Valid @RequestBody UserDto user) {
+        User userEntity = new User(); // Create a new User entity
+        userEntity.setUsername(user.getUsername());
+        userEntity.setEmail(user.getEmail());
+        userEntity.setPassword(user.getPassword());
+        UserType userType = user.getUserType() != null ? UserType.valueOf(user.getUserType().toUpperCase())
+                : UserType.USER;
+        userEntity.setUserType(userType);
+        User createdUser = userService.createUser(userEntity);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
@@ -121,9 +132,18 @@ public class UserController {
     })
     @ResponseStatus(HttpStatus.OK) // Set response status
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable UUID id, @RequestBody User userDetails) { // Changed Long to
-                                                                                                   // UUID
-        return userService.updateUser(id, userDetails)
+    public ResponseEntity<User> updateUser(@PathVariable UUID id, @Valid @RequestBody UserDto userDetails) { // Changed
+                                                                                                             // Long to
+        // UUID
+        User userEntity = new User(); // Create a new User entity
+        userEntity.setUsername(userDetails.getUsername());
+        userEntity.setEmail(userDetails.getEmail());
+        userEntity.setPassword(userDetails.getPassword());
+        UserType userType = userDetails.getUserType() != null
+                ? UserType.valueOf(userDetails.getUserType().toUpperCase())
+                : UserType.USER;
+        userEntity.setUserType(userType);
+        return userService.updateUser(id, userEntity)
                 .map(updatedUser -> new ResponseEntity<>(updatedUser, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }

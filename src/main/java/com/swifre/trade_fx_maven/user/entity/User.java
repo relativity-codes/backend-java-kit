@@ -49,8 +49,8 @@ public class User implements UserDetails { // Implemented UserDetails
     @Column(nullable = false)
     private UserType userType;
 
-    @Column(name = "email_verified", nullable = false)
-    private boolean emailVerified = false;
+    @Column(name = "email_verified_at", nullable = true)
+    private LocalDateTime emailVerifiedAt;
 
     @Column(name = "two_factor_secret", nullable = true)
     private String twoFactorSecret;
@@ -181,14 +181,14 @@ public class User implements UserDetails { // Implemented UserDetails
                 Objects.equals(email, user.email) &&
                 Objects.equals(password, user.password) &&
                 Objects.equals(userType, user.userType) &&
-                Objects.equals(emailVerified, user.emailVerified) &&
+                Objects.equals(emailVerifiedAt, user.emailVerifiedAt) &&
                 Objects.equals(createdAt, user.createdAt) &&
                 Objects.equals(updatedAt, user.updatedAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, email, password, userType, emailVerified, createdAt, updatedAt);
+        return Objects.hash(id, username, email, password, userType, emailVerifiedAt, createdAt, updatedAt);
     }
 
     @Override
@@ -199,14 +199,14 @@ public class User implements UserDetails { // Implemented UserDetails
                 ", email='" + email + '\'' +
                 ", password='[PROTECTED]'" +
                 ", userType='" + userType + '\'' +
-                ", emailVerified='" + emailVerified + '\'' +
+                ", emailVerifiedAt='" + emailVerifiedAt + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';
     }
 
     public boolean isEmailVerified() {
-        return emailVerified;
+        return this.emailVerifiedAt != null;
     }
 
     /**
@@ -214,8 +214,8 @@ public class User implements UserDetails { // Implemented UserDetails
      *
      * @param emailVerified true if the email is verified, false otherwise.
      */
-    public void setEmailVerified(boolean emailVerified) {
-        this.emailVerified = emailVerified;
+    public void setEmailVerifiedAt(LocalDateTime emailVerifiedAt) {
+        this.emailVerifiedAt = emailVerifiedAt;
     }
 
     public String getTwoFactorSecret() {
