@@ -165,7 +165,7 @@ public class AuthController {
      * @return ResponseEntity indicating success or failure.
      */
     @PostMapping("/me/password")
-    public ResponseEntity<Void> updatePassword(@Valid @RequestBody UpdatePasswordRequest updatePasswordRequest) {
+    public ResponseEntity<String> updatePassword(@Valid @RequestBody UpdatePasswordRequest updatePasswordRequest) {
         try {
             User user = this.authService.getCurrentUser();
             if (user == null) {
@@ -173,21 +173,21 @@ public class AuthController {
             }
             this.authService.changePassword(user.getId(), updatePasswordRequest.getOldPassword(),
                     updatePasswordRequest.getNewPassword());
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>("Password updated successfully", HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PostMapping("/me/email")
-    public ResponseEntity<Void> updateEmail(@Valid @RequestBody UpdateEmailRequest updateEmailRequest) {
+    public ResponseEntity<String> updateEmail(@Valid @RequestBody UpdateEmailRequest updateEmailRequest) {
         try {
             User user = this.authService.getCurrentUser();
             if (user == null) {
                 return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
             }
             this.authService.updateEmail(user.getId(), updateEmailRequest.getEmail());
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>("Email updated successfully", HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -199,19 +199,17 @@ public class AuthController {
         try {
             this.authService.requestPasswordReset(resetPasswordRequest.getEmail());
             String message = "Password reset email sent successfully.";
-            return new ResponseEntity<>(message, HttpStatus.OK);
+            return new ResponseEntity<>(message, HttpStatus.OK);        
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        }       
     }
 
     // reset password with token
     @PostMapping("/reset-password/confirm")
-    public ResponseEntity<Void> confirmPasswordReset(
-            @Valid @RequestBody ConfirmPasswordResetRequest confirmPasswordResetRequest) {
+    public ResponseEntity<String> confirmPasswordReset(@Valid @RequestBody ConfirmPasswordResetRequest confirmPasswordResetRequest) {
         try {
-            this.authService.resetPassword(confirmPasswordResetRequest.getToken(),
-                    confirmPasswordResetRequest.getNewPassword());
+            this.authService.resetPassword(confirmPasswordResetRequest.getToken(), confirmPasswordResetRequest.getNewPassword());
             return new ResponseEntity<>("Password reset successfully.", HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
