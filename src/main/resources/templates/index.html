@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Walkre.com API Backend</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f7fa;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: #1e293b;
+            color: white;
+            width: 100%;
+            padding: 1rem 0;
+            text-align: center;
+        }
+
+        main {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 1rem;
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 1rem;
+            background-color: #e2e8f0;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+            <h1>Walkre.com Ecommerce Backend</h1>
+    </header>
+    <main>
+        <p>Welcome to the Walkre.com backend system.</p>
+        <p>This project powers the core business logic and APIs for the Walkre.com application.</p>
+
+        <a href="/swagger-ui/index.html" target="_blank">View API Documentation (Swagger)</a>
+    </main>
+    <footer>
+        &copy; <span id="year"></span> Elwalkre Technologies. All rights reserved.
+    </footer>
+
+    <script>
+        document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>
