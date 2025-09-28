@@ -1,7 +1,6 @@
 
-# Walkre.com Ecommerce Backend
 
-This is the backend API for Walkre.com, built with Java Spring Boot. It provides core business logic, authentication, user management, mailing, and more for the Walkre.com ecommerce platform.
+This is the backend API, built with Java Spring Boot. It provides core business logic, authentication, user management, mailing, and more for the Walkre.com ecommerce platform.
 
 ## Prerequisites
 
@@ -96,7 +95,3 @@ server.port=8080
     Use `flyway:repair` and check the `flyway_schema_history` table in your database.
 
 ## Contributing
-
-Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
-# backend-java-kit
-# elwalkre-commerce-backend-java
