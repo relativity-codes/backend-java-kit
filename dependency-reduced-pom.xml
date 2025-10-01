@@ -7,7 +7,7 @@
     <relativePath>pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.elwalkre</groupId>
+  <groupId>com.standard</groupId>
   <artifactId>commerce-maven</artifactId>
   <name>commerce-maven</name>
   <version>0.0.1-SNAPSHOT</version>
@@ -67,6 +67,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
         <configuration>
+          <mainClass>com.standard.commerce_maven.CommerceMavenApplication</mainClass>
           <excludes>
             <exclude>
               <groupId>org.projectlombok</groupId>
@@ -94,6 +95,12 @@
       <version>1.18.38</version>
       <scope>provided</scope>
       <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-hibernate5-jakarta</artifactId>
+      <version>2.20.0</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.amazonaws.serverless</groupId>

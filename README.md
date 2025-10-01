@@ -14,8 +14,8 @@ This is the backend API, built with Java Spring Boot. It provides core business 
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-org/elwalkre-backend-java.git
-cd elwalkre-backend-java
+git clone https://github.com/your-org/backend-java-kit.git
+cd backend-java-kit
 ```
 
 ### 2. Configure Environment
@@ -71,7 +71,7 @@ server.port=8080
 
 ## Project Structure
 
-- `src/main/java/com/elwalkre/commerce_maven/` — Main Java source code
+- `src/main/java/com/backende_mav-kiten/` — Main Java source code
 - `src/main/resources/` — Application config, templates, migrations, certificates
 - `src/main/resources/templates/index.html` — Home page for backend
 - `src/main/resources/db/migration/` — Flyway migration scripts
